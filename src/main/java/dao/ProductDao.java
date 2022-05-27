@@ -44,15 +44,15 @@ public class ProductDao {
 
 	public Product findById(int product_id) {
 		String SQL_SELECT_SEARCH_WHERE_PRODUCT_ID = "SELECT * FROM \r\n"
-				+ " (SELECT product_id, category_id, p.name p_name, price, c.name c_name, description, p.created_at created_at FROM categories c JOIN products p ON c.id = p.category_id) a\r\n"
+				+ " (SELECT p.id, product_id, category_id, p.name p_name, price, c.name c_name, description, p.created_at created_at, p.updated_at updated_at FROM categories c JOIN products p ON c.id = p.category_id) a\r\n"
 				+ "WHERE product_id = ?";
 		try (PreparedStatement stmt = connection.prepareStatement(SQL_SELECT_SEARCH_WHERE_PRODUCT_ID)) {
 			stmt.setInt(1, product_id);
 			ResultSet rs = stmt.executeQuery();
 
 			if(rs.next()) {
-				return new Product(rs.getInt("product_id"), rs.getInt("category_id"), rs.getString("c_name"), rs.getString("p_name"), rs.getInt("price"),
-						rs.getString("description"));
+				return new Product(rs.getInt("id"), rs.getInt("product_id"), rs.getInt("category_id"), rs.getString("c_name"), rs.getString("p_name"), rs.getInt("price"),
+						rs.getString("description"), rs.getTimestamp("created_at"), rs.getTimestamp("updated_at"));
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -71,7 +71,7 @@ public class ProductDao {
 			column = sort;
 		}
 		String SQL_SELECT_SEARCH_WHERE_KEYWORD = "SELECT * FROM \r\n"
-				+ " (SELECT product_id, category_id, p.name p_name, price, c.name c_name, description, p.created_at created_at FROM categories c JOIN products p ON c.id = p.category_id) a\r\n"
+				+ " (SELECT product_id, category_id, p.name p_name, price, c.name c_name, description, p.created_at created_at, p.updated_at updated_at FROM categories c JOIN products p ON c.id = p.category_id) a\r\n"
 				+ "WHERE c_name LIKE ? OR p_name LIKE ?"
 				+ " ORDER BY " + column;
 		List<Product> list = new ArrayList<Product>();
@@ -112,12 +112,14 @@ public class ProductDao {
 		}
 	}
 
-	public void delete(Integer product_id) {
+	public int delete(Integer product_id) {
 		try (PreparedStatement stmt = connection.prepareStatement(SQL_DELETE_PRODUCT)) {
 			stmt.setInt(1, product_id);
-			stmt.executeUpdate();
+			return stmt.executeUpdate();
+//			return 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return 0;
 			//    		throw new RuntimeException(e);
 		}
 	}

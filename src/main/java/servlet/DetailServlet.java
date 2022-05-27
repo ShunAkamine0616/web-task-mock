@@ -49,7 +49,7 @@ public class DetailServlet extends HttpServlet {
 		Product p = pService.findById(product_id_int);
 		session.setAttribute("product", p);
 //		pService.delete(product_id_int);
-		
+		session.removeAttribute("deleteErrMsg");
 		request.getRequestDispatcher("detail.jsp").forward(request, response);
 		return;
 	}

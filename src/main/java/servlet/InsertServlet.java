@@ -61,6 +61,7 @@ public class InsertServlet extends HttpServlet {
 		request.setAttribute("productId", productId);
 		request.setAttribute("productName", productName);
 		request.setAttribute("price", price);
+//		session.getAttribute("product", );
 //		request.setAttribute("category", category);
 		
 		boolean error = false;

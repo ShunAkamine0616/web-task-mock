@@ -44,6 +44,44 @@ public class Product {
 		this.description = description;
 		this.create_at = create_at;
 	}
+	
+	public Product(Integer product_id, Integer category_id, 
+			String name, Integer price,  String description, Timestamp create_at, Timestamp update_at) {
+		this.product_id = product_id;
+		this.category_id = category_id;
+//		this.category = new Category(category_id, category_name);
+		this.name = name;
+		this.price = price;
+		this.description = description;
+		this.create_at = create_at;
+		this.update_at = update_at;
+	}
+	
+	public Product(Integer id, Integer product_id, Integer category_id, 
+			String name, Integer price,  String description, Timestamp create_at) {
+		this.id = id;
+		this.product_id = product_id;
+		this.category_id = category_id;
+//		this.category = new Category(category_id, category_name);
+		this.name = name;
+		this.price = price;
+		this.description = description;
+		this.create_at = create_at;
+	}
+	
+	public Product(Integer id, Integer product_id, Integer category_id, 
+			String name, Integer price,  String description, Timestamp create_at, Timestamp update_at) {
+		this.id = id;
+		this.product_id = product_id;
+		this.category_id = category_id;
+//		this.category = new Category(category_id, category_name);
+		this.name = name;
+		this.price = price;
+		this.description = description;
+		this.create_at = create_at;
+		this.update_at = update_at;
+	}
+	
 
 	public Product(Integer product_id, Integer category_id, String category_name,
 			String name, Integer price,  String description) {
@@ -53,6 +91,19 @@ public class Product {
 		this.name = name;
 		this.price = price;
 		this.description = description;
+	}
+	
+	public Product(Integer id, Integer product_id, Integer category_id, String category_name,
+			String name, Integer price,  String description, Timestamp create_at, Timestamp update_at) {
+		this.id = id;
+		this.product_id = product_id;
+		this.category_id = category_id;
+		this.category = new Category(category_id, category_name);
+		this.name = name;
+		this.price = price;
+		this.description = description;
+		this.create_at = create_at;
+		this.update_at = update_at;
 	}
 
 	//	

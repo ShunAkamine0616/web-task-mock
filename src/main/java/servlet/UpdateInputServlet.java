@@ -47,7 +47,7 @@ public class UpdateInputServlet extends HttpServlet {
 		ProductService pService = new ProductService();
 
 		session.setAttribute("product", pService.findById(productId_int));
-
+		session.removeAttribute("updateErrMsg");
 		request.getRequestDispatcher("updateInput.jsp").forward(request, response);
 		return;
 	}

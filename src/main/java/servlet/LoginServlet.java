@@ -86,6 +86,7 @@ public class LoginServlet extends HttpServlet {
 			return;
 		} else {
 			session.setAttribute("name", u.getName());
+			session.setAttribute("role", u.getRole());
 			session.setAttribute("productList", pService.find("product_id"));
 			session.removeAttribute("successMsg");
 			request.getRequestDispatcher("menu.jsp").forward(request, response);

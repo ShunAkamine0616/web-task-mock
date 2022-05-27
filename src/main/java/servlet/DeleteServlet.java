@@ -43,13 +43,21 @@ public class DeleteServlet extends HttpServlet {
 		} catch(Exception e) {
 			session.setAttribute("deleteErrMsg", "削除に失敗しました");
 			e.printStackTrace();
+			request.getRequestDispatcher("detail.jsp").forward(request, response);
+			return;
 		}
 
 		ProductService pService = new ProductService();
-
-		pService.delete(productId_int);
+		
+		if(pService.delete(productId_int) == 0) {
+			session.setAttribute("deleteErrMsg", "削除に失敗しました。");
+			request.getRequestDispatcher("detail.jsp").forward(request, response);
+			return;
+		} else {
+			session.setAttribute("successMsg", "削除に成功しました");
+		}
+		
 		session.setAttribute("productList", pService.find("product_id")); 
-		session.setAttribute("successMsg", "削除に成功しました");
 		request.getRequestDispatcher("menu.jsp").forward(request, response);
 		return;
 	}

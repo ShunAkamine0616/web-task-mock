@@ -50,7 +50,12 @@ public class UpdateServlet extends HttpServlet {
 		Integer price_int = 0;
 		Integer category_id_int = 0;
 		boolean error = false;
-		
+
+		ProductService pService = new ProductService();
+
+
+
+
 		try {
 			productId_int = Integer.parseInt(productId);
 			price_int = Integer.parseInt(price);
@@ -58,43 +63,63 @@ public class UpdateServlet extends HttpServlet {
 		} catch(Exception e) {
 			error = true;
 			session.setAttribute("updateErrMsg", "更新時にエラーが発生しました");
+			request.getRequestDispatcher("updateInput.jsp").forward(request, response);
 			e.printStackTrace();
+			return;
 		}
+
+		// すでにproduct_idが存在しているか確かめるために取得
+		Product p = pService.findById(productId_int);
+		if(p != null) { // 同じ商品IDをもつ商品が存在するとき
+			// product_idを変更しようとして、他のレコードのproduct_idと重複していたら
+			if(p.getId() != oldProduct.getId()) { // 他の商品ならば 
+				session.setAttribute("updateErrMsg", "商品IDが重複しています");
+				request.getRequestDispatcher("updateInput.jsp").forward(request, response);
+				return;
+			} 
+		}
+
+//		if(oldProduct.getProduct_id() == productId_int) {
+//			session.setAttribute("updateErrMsg", "更新時にエラーが発生しました");
+//		}
 
 		if (Utility.isNullOrEmpty(productId)) {
 			request.setAttribute("idErrMsg", "<商品ID>は必須です");
 			error = true;
 		} 
-		
+
 		if(Utility.isNullOrEmpty(productName)){
 			request.setAttribute("nameErrMsg", "<商品名>は必須です");
 			error = true;
 		} 
-		
+
 		if(Utility.isNullOrEmpty(price)){
 			request.setAttribute("priceErrMsg", "<単価>は必須です");
 			error = true;
 		} 
-		
-//		if(Utility.isNullOrEmpty(category)){
-//			request.setAttribute("categoryErrMsg", "<カテゴリ>は必須です");
-//			error = true;
-//		} 
-		
+
+		//		if(Utility.isNullOrEmpty(category)){
+		//			request.setAttribute("categoryErrMsg", "<カテゴリ>は必須です");
+		//			error = true;
+		//		} 
+
 		if(error) {
+			session.removeAttribute("updateErrMsg");
 			request.getRequestDispatcher("updateInput.jsp").forward(request, response);
 			return;
 		} else {
-			ProductService pService = new ProductService();
 			Date nowDate = new Date();
 			Timestamp timestamp = new Timestamp(nowDate.getTime());
-			Product p = new Product(productId_int, category_id_int, productName, price_int,  description, timestamp); 
+			Product updateProduct = new Product(productId_int, category_id_int, productName, price_int,  description, oldProduct.getCreate_at(), timestamp); 
 			try {
-				pService.update(oldProduct.getProduct_id(), p);
+				pService.update(oldProduct.getProduct_id(), updateProduct);
 			} catch(Exception e) {
 				session.setAttribute("updateErrMsg", "更新時にエラーが発生しました");
+				request.getRequestDispatcher("updateInput.jsp").forward(request, response);
+				return;
 			}
-			session.setAttribute("productList", pService.find("product_id")); 
+			session.setAttribute("productList", pService.find("product_id"));
+			session.setAttribute("successMsg", "更新処理が完了しました");
 			request.getRequestDispatcher("menu.jsp").forward(request, response);
 			return;
 		}

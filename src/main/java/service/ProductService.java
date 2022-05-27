@@ -54,12 +54,13 @@ public class ProductService {
 		}
 	}
 	
-	public void delete(Integer product_id) {
+	public int delete(Integer product_id) {
 		try (Connection conn = DbUtil.getConnection()) {
 			ProductDao ProductDao = new ProductDao(conn);
-			ProductDao.delete(product_id);
+			return ProductDao.delete(product_id);
 		} catch (Exception e) {
 			e.printStackTrace();
+			return 0;
 		}
 	}
 
