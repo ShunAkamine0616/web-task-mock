@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import entity.User;
+import service.ProductService;
 import service.UserService;
 import util.Utility;
 
@@ -77,14 +78,16 @@ public class LoginServlet extends HttpServlet {
 		UserService uService = new UserService();
 		//		List<User> productList = null;
 		User u = uService.findByUserIdAndPass(loginId, pass);
+		ProductService pService = new ProductService();
 		
-
 		if(u == null) {
 			session.setAttribute("loginErrMsg", "IDまたはパスワードが不正です");
 			request.getRequestDispatcher("index.jsp").forward(request, response);
 			return;
 		} else {
 			session.setAttribute("name", u.getName());
+			session.setAttribute("productList", pService.find("product_id"));
+			session.removeAttribute("successMsg");
 			request.getRequestDispatcher("menu.jsp").forward(request, response);
 			return;
 		}

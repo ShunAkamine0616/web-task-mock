@@ -23,16 +23,16 @@ public class CategoryService {
 //        return null;
 //    }
 
-//    public List<Category> find() {
-//        try (Connection conn = DbUtil.getConnection()) {
-//            CategoryDao CategoryDao = new CategoryDao(conn);
-//            return CategoryDao.findAll();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return Collections.emptyList();
-//    }
+    public List<Category> find() {
+        try (Connection conn = DbUtil.getConnection()) {
+            CategoryDao CategoryDao = new CategoryDao(conn);
+            return CategoryDao.findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return Collections.emptyList();
+    }
     
 	public List<Category> findByKeyword(String keyword) {
         try (Connection conn = DbUtil.getConnection()) {

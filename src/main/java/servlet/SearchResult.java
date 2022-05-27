@@ -43,23 +43,35 @@ public class SearchResult extends HttpServlet {
 
 		String keyword = request.getParameter("keyword");
 
-
-
+		String sort = request.getParameter("sort");
+		
 
 		HttpSession session = request.getSession();
-
+		
+		session.setAttribute("keyword", keyword);
+		session.setAttribute("sort", sort);
+		
 		ProductService pService = new ProductService();
 		CategoryService cService = new CategoryService();
 		List<Product> productList = null;
 		List<Category> categoryList = null;
 		
 		if (Utility.isNullOrEmpty(keyword)) {
-			productList = pService.find();
+			productList = pService.find(sort);
 			session.setAttribute("productList", productList);
+			if(productList.size() == 0) {
+				session.setAttribute("successMsg", "検索条件と十分に一致する結果が見つかりません");
+			} else {
+				session.removeAttribute("successMsg");
+			}
 		} else {
-			productList = pService.findByKeyword(keyword);
+			productList = pService.findByKeyword(keyword, sort);
 //			categoryList = cService.findByKeyword(keyword);
-			
+			if(productList.size() == 0) {
+				session.setAttribute("successMsg", "検索条件と十分に一致する結果が見つかりません");
+			} else {
+				session.removeAttribute("successMsg");
+			}
 			session.setAttribute("productList", productList);
 //			session.setAttribute("categoryList", categoryList);
 		} 

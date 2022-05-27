@@ -10,10 +10,10 @@ import util.DbUtil;
 
 public class ProductService {
 
-	public List<Product> find() {
+	public List<Product> find(String sort) {
 		try (Connection conn = DbUtil.getConnection()) {
 			ProductDao ProductDao = new ProductDao(conn);
-			return ProductDao.findAll();
+			return ProductDao.findAll(sort);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -32,10 +32,10 @@ public class ProductService {
 		return null;
 	}
 
-	public List<Product> findByKeyword(String keyword) {
+	public List<Product> findByKeyword(String keyword, String sort) {
 		try (Connection conn = DbUtil.getConnection()) {
 			ProductDao ProductDao = new ProductDao(conn);
-			return ProductDao.findByKeyword(keyword);
+			return ProductDao.findByKeyword(keyword, sort);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -50,6 +50,7 @@ public class ProductService {
 			ProductDao.update(product_id, product);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 	
@@ -70,5 +71,14 @@ public class ProductService {
 			e.printStackTrace();
 		}
 	}
+	
+//	public void sort(String sort) {
+//		try (Connection conn = DbUtil.getConnection()) {
+//			ProductDao ProductDao = new ProductDao(conn);
+//			ProductDao.sort(sort);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 }

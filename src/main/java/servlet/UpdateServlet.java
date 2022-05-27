@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import entity.Product;
 import service.ProductService;
+import util.Utility;
 
 /**
  * Servlet implementation class UpdateServlet
@@ -39,7 +40,6 @@ public class UpdateServlet extends HttpServlet {
 		String productId = request.getParameter("productId");
 		String productName = request.getParameter("productName");
 		String price = request.getParameter("price");
-//		String category = request.getParameter("category");
 		String category_id = request.getParameter("category_id");
 		String description = request.getParameter("description");
 
@@ -49,25 +49,55 @@ public class UpdateServlet extends HttpServlet {
 		Integer productId_int = 0;
 		Integer price_int = 0;
 		Integer category_id_int = 0;
-
+		boolean error = false;
+		
 		try {
 			productId_int = Integer.parseInt(productId);
 			price_int = Integer.parseInt(price);
 			category_id_int = Integer.parseInt(category_id);
 		} catch(Exception e) {
+			error = true;
+			session.setAttribute("updateErrMsg", "更新時にエラーが発生しました");
 			e.printStackTrace();
 		}
 
-		ProductService pService = new ProductService();
-	
+		if (Utility.isNullOrEmpty(productId)) {
+			request.setAttribute("idErrMsg", "<商品ID>は必須です");
+			error = true;
+		} 
 		
-		Date nowDate = new Date();
-		Timestamp timestamp = new Timestamp(nowDate.getTime());
-		Product p = new Product(productId_int, category_id_int, productName, price_int,  description, timestamp); 
-		pService.update(oldProduct.getProduct_id(), p);
-
-		request.getRequestDispatcher("menu.jsp").forward(request, response);
-		return;
+		if(Utility.isNullOrEmpty(productName)){
+			request.setAttribute("nameErrMsg", "<商品名>は必須です");
+			error = true;
+		} 
+		
+		if(Utility.isNullOrEmpty(price)){
+			request.setAttribute("priceErrMsg", "<単価>は必須です");
+			error = true;
+		} 
+		
+//		if(Utility.isNullOrEmpty(category)){
+//			request.setAttribute("categoryErrMsg", "<カテゴリ>は必須です");
+//			error = true;
+//		} 
+		
+		if(error) {
+			request.getRequestDispatcher("updateInput.jsp").forward(request, response);
+			return;
+		} else {
+			ProductService pService = new ProductService();
+			Date nowDate = new Date();
+			Timestamp timestamp = new Timestamp(nowDate.getTime());
+			Product p = new Product(productId_int, category_id_int, productName, price_int,  description, timestamp); 
+			try {
+				pService.update(oldProduct.getProduct_id(), p);
+			} catch(Exception e) {
+				session.setAttribute("updateErrMsg", "更新時にエラーが発生しました");
+			}
+			session.setAttribute("productList", pService.find("product_id")); 
+			request.getRequestDispatcher("menu.jsp").forward(request, response);
+			return;
+		}
 	}
 
 	/**

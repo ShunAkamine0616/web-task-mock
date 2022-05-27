@@ -2,8 +2,6 @@ package servlet;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.servlet.ServletException;
@@ -11,8 +9,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import entity.Product;
+import service.CategoryService;
 import service.ProductService;
 import util.Utility;
 
@@ -47,6 +47,8 @@ public class InsertServlet extends HttpServlet {
 		Integer productId_int = 0;
 		Integer price_int = 0;
 		Integer category_int = 0;
+		
+		HttpSession session = request.getSession();
 		
 		try {
 			productId_int = Integer.parseInt(productId);
@@ -83,11 +85,16 @@ public class InsertServlet extends HttpServlet {
 		} 
 		
 		ProductService pService = new ProductService();
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+		CategoryService cService= new CategoryService();
+		session.setAttribute("categoryList", cService.find());
+//		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 		Date nowDate = new Date();
 		Timestamp timestamp = new Timestamp(nowDate.getTime());
 		Product p = new Product(productId_int, category_int, productName, price_int,  description, timestamp); 
-		
+		if(pService.findById(productId_int) != null) {
+			error = true;
+			session.setAttribute("insertErrMsg", "商品IDが重複しています");
+		}
 		
 //		pService.register(null);
 		if(error) {
@@ -95,6 +102,8 @@ public class InsertServlet extends HttpServlet {
 			return;
 		} else {
 			pService.register(p);
+			session.setAttribute("productList", pService.find("product_id")); 
+			session.setAttribute("successMsg", "登録が完了しました");
 			request.getRequestDispatcher("menu.jsp").forward(request, response);
 			return;
 		}

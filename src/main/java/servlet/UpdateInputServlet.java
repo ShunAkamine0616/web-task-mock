@@ -12,45 +12,43 @@ import javax.servlet.http.HttpSession;
 import service.ProductService;
 
 /**
- * Servlet implementation class DeleteServlet
+ * Servlet implementation class UpdateInputServlet
  */
-@WebServlet("/DeleteServlet")
-public class DeleteServlet extends HttpServlet {
+@WebServlet("/UpdateInputServlet")
+public class UpdateInputServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
-	public DeleteServlet() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public UpdateInputServlet() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		//response.getWriter().append("Served at: ").append(request.getContextPath());
+		// response.getWriter().append("Served at: ").append(request.getContextPath());
 		request.setCharacterEncoding("UTF-8");
 		String productId = request.getParameter("productId");
 		
-//		HttpSession session = request.getSession();
 		HttpSession session = request.getSession();
+
 		Integer productId_int = 0;
 		try {
 			productId_int = Integer.parseInt(productId);
 		} catch(Exception e) {
-			session.setAttribute("deleteErrMsg", "削除に失敗しました");
 			e.printStackTrace();
 		}
 
 		ProductService pService = new ProductService();
 
-		pService.delete(productId_int);
-		session.setAttribute("productList", pService.find("product_id")); 
-		session.setAttribute("successMsg", "削除に成功しました");
-		request.getRequestDispatcher("menu.jsp").forward(request, response);
+		session.setAttribute("product", pService.findById(productId_int));
+
+		request.getRequestDispatcher("updateInput.jsp").forward(request, response);
 		return;
 	}
 
@@ -59,7 +57,7 @@ public class DeleteServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+		// doGet(request, response);
 	}
 
 }

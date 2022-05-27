@@ -10,7 +10,7 @@ import entity.Category;
 
 public class CategoryDao {
 	private Connection connection;
-	private static final String SQL_SELECT_ALL = "SELECT product_id, product_name, price FROM products ORDER BY product_id";
+	private static final String SQL_SELECT_ALL = "SELECT * FROM categories";
 	private static final String SQL_INSERT_USER = "INSERT INTO products(product_name, price) VALUES(?, ?)";
 	private static final String SQL_SELECT_SEARCH_WHERE_KEYWORD = "SELECT * FROM \r\n"
 			+ " (SELECT product_id, category_id, p.name p_name, price, c.name c_name, description FROM categories c JOIN products p ON c.id = p.category_id) a\r\n"
@@ -28,7 +28,7 @@ public class CategoryDao {
 	            ResultSet rs = stmt.executeQuery();
 
 	            while (rs.next()) {
-	                Category u = new Category(rs.getInt("category_id"), rs.getString("c_name"));
+	                Category u = new Category(rs.getInt("id"), rs.getString("name"));
 	                list.add(u);
 	            }
 	        } catch (SQLException e) {
@@ -43,7 +43,7 @@ public class CategoryDao {
         	stmt.setString(1, "%" + keyword + "%");
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Category u = new Category(rs.getInt("category_id"), rs.getString("c_name"));
+                Category u = new Category(rs.getInt("id"), rs.getString("name"));
                 list.add(u);
             }
         } catch (SQLException e) {
